@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <th:block th:replace="~{components/head :: recursos}"></th:block>
+  <script type="module" th:src="@{/js/main.js}"></script>
+  <title>Directorio de Usuarios</title>
+</head>
+
+<body class="bg-light py-4" data-page="Usuario">
+  <div class="container-fluid px-4">
+
+    <div class="card shadow sm border-0 rounded-4 mb-4">
+      <div class="card-body bg-light rounded-4">
+        <form th:action="@{/usuario/buscar}" th:object="${usuarioBusqueda}" method="post">
+          <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+              <label for="Nombre" class="form-label small text-muted">Nombre</label>
+              <input type="text" class="form-control" id="Nombre" th:field="*{Nombre}">
+            </div>
+            <div class="col-md-2">
+              <label for="ApellidoPaterno" class="form-label small text-muted">Apellido Paterno</label>
+              <input type="text" class="form-control" id="ApellidoPaterno" th:field="*{ApellidoPaterno}">
+            </div>
+            <div class="col-md-2">
+              <label for="ApellidoMaterno" class="form-label small text-muted">Apellido Materno</label>
+              <input type="text" class="form-control" id="ApellidoMaterno" th:field="*{ApellidoMaterno}">
+            </div>
+            <div class="col-md-3">
+              <label for="Rol" class="form-label small text-muted">Rol</label>
+              <select id="Rol" class="form-select" th:field="*{rol.IdRol}">
+                <option value="0">Todos los roles</option>
+                <option th:each="rol : ${roles}" th:value="${rol.IdRol}" th:text="${rol.Nombre}"></option>
+              </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+              <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-1"></i>Buscar
+              </button>
+              <a th:href="@{/usuario}" class="btn btn-outline-secondary" title="limpiar"><i
+                  class="bi bi-eraser"></i></a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+
+      <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-people-fill me-2"></i>Directorio de Usuarios</h5>
+
+        <div class="d-flex gap-2">
+          <a th:href="@{/usuario/cargar}" class="btn btn-success rounded-pill shadow-sm px-3"
+            title="Carga Masiva de Usuarios">
+            <i class="bi bi-cloud-upload me-1"></i> Cargar Usuarios
+          </a>
+
+          <a th:href="@{/usuario/form}" class="btn btn-primary rounded-pill shadow-sm px-3">
+            <i class="bi bi-person-plus-fill me-1"></i> Nuevo Usuario
+          </a>
+        </div>
+      </div>
+
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light text-secondary small text-uppercase">
+              <tr>
+                <th class="ps-4">Usuario</th>
+                <th>Contacto</th>
+                <th>Direcciones Registradas</th>
+                <th class="text-center">Estatus</th>
+                <th class="text-center pe-4">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="border-top-0">
+
+              <tr th:each="usuario : ${usuarios}">
+
+                <td class="ps-4 align-middle">
+                  <div class="d-flex align-items-center mb-2">
+                    <div class="avatar-circle me-3 flex-shrink-0">
+                      <i class="bi bi-person"></i>
+                    </div>
+                    <div>
+                      <div class="fw-bold text-dark"
+                        th:text="|${usuario.Nombre} ${usuario.ApellidoPaterno} ${usuario.ApellidoMaterno}|"></div>
+                      <div class="small text-muted">
+                        <span class="fw-medium text-secondary" th:text="${usuario.UserName}"></span> •
+                        <span class="badge badge-soft-success rounded-pill" th:text="${usuario.Rol.Nombre}"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="small text-muted mt-2 ps-1">
+                    <div class="mb-1"><i class="bi bi-upc-scan me-1"></i><span th:text="${usuario.Curp}"></span></div>
+                    <div><i class="bi bi-calendar3 me-1"></i><span th:text="${usuario.FechaNacimiento}"></span> (<span
+                        th:text="${usuario.Sexo}"></span>)</div>
+                  </div>
+                </td>
+
+                <td class="align-middle">
+                  <ul class="list-unstyled mb-0 small text-secondary">
+                    <li class="mb-2">
+                      <i class="bi bi-envelope-at text-danger me-2"></i>
+                      <a th:href="'mailto:' + ${usuario.Email}" class="text-decoration-none text-secondary"
+                        th:text="${usuario.Email}"></a>
+                    </li>
+                    <li class="mb-2">
+                      <i class="bi bi-telephone text-primary me-2"></i>
+                      <span th:text="${usuario.Telefono}"></span>
+                    </li>
+                    <li>
+                      <i class="bi bi-phone text-success me-2"></i>
+                      <span th:text="${usuario.Celular}"></span>
+                    </li>
+                  </ul>
+                </td>
+
+                <td style="min-width: 280px;" class="align-middle">
+                  <div th:each="direccion : ${usuario.Direcciones}" class="mb-2">
+                    <div th:if="${direccion.Calle != null}" class="address-card p-2 rounded-3 small">
+                      <div class="fw-bold text-dark mb-1">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                        <span th:text="|${direccion.Calle?: 'No definido'} #${direccion.NumeroExterior}|"></span>
+                        <span th:if="${direccion.NumeroInterior !=null && !direccion.NumeroInterior.isEmpty()}"
+                          th:text="|Int. ${direccion.NumeroInterior}|"></span>
+                      </div>
+                      <div class="text-secondary ms-3">
+                        <div th:if="${direccion.Colonia.Nombre != null}"
+                          th:text="|Col. ${direccion.Colonia.Nombre}, ${direccion.Colonia.Municipio.Nombre}|"></div>
+                        <div class="text-muted" th:if="${direccion.Colonia.Nombre != null}"
+                          th:text="|${direccion.Colonia.Municipio.Estado.Nombre}, ${direccion.Colonia.Municipio.Estado.Pais.Nombre}|">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="text-center align-middle">
+                  <div class="form-check form-switch d-flex justify-content-center">
+                    <input class="form-check-input" type="checkbox" role="switch"
+                      th:id="'switchEstatus_' + ${usuario.IdUsuario}"
+                      th:checked="${usuario.Estatus != null and (#strings.toString(usuario.Estatus) == '1' or #strings.toString(usuario.Estatus) == 'true')}"
+                      th:data-usuario-id="${usuario.IdUsuario}" th:data-url="@{/usuario/cambiarEstatus}">
+                  </div>
+                </td>
+
+                <td class="text-center pe-4 align-middle">
+                  <div class="btn-group shadow-sm">
+                    <a th:href="@{/usuario/detail/{IdUsuario}(IdUsuario=${usuario.IdUsuario})}"
+                      class="btn btn-sm btn-outline-primary" title="Editar / Ver Detalles">
+                      <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar-direccion-usuario"
+                      title="Eliminar"
+                      th:data-url="@{/usuario/detail/delete/{IdUsuario}(IdUsuario=${usuario.IdUsuario})}">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" id="mensajeExito" th:if="${mensajeExito != null}" th:value="${mensajeExito}">
+  <input type="hidden" id="mensajeError" th:if="${mensajeError != null}" th:value="${mensajeError}">
+</body>
+
+</html>

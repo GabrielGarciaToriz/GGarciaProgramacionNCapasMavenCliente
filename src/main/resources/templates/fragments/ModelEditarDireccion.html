@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="contenidoModal">
+        <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">
+                <i class="bi bi-pencil-square me-2"></i>Editar Dirección
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <form method="post" th:action="@{/usuario/modificarDireccion}" th:object="${direccionEdit}">
+            <input type="hidden" th:field="*{IdDireccion}" />
+            <input type="hidden" name="IdUsuario" th:value="${usuario.IdUsuario}" th:if="${usuario != null}"/>
+
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Calle</label>
+                        <input type="text" class="form-control" th:field="*{Calle}" required />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Núm. Exterior</label>
+                        <input type="text" class="form-control" th:field="*{NumeroExterior}" required />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Núm. Interior</label>
+                        <input type="text" class="form-control" th:field="*{NumeroInterior}" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">País</label>
+                        <select class="form-select" id="editSelectPais" th:field="*{Colonia.Municipio.Estado.Pais.IdPais}">
+                            <option th:each="pais : ${paises}" th:value="${pais.IdPais}" th:text="${pais.Nombre}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Estado</label>
+                        <select class="form-select" id="editSelectEstado" th:field="*{Colonia.Municipio.Estado.IdEstado}">
+                            <option th:each="estado : ${estados}" th:value="${estado.IdEstado}" th:text="${estado.Nombre}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Municipio</label>
+                        <select class="form-select" id="editSelectMunicipio" th:field="*{Colonia.Municipio.IdMunicipio}">
+                            <option th:each="municipio : ${municipios}" th:value="${municipio.IdMunicipio}" th:text="${municipio.Nombre}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Colonia</label>
+                        <select class="form-select" id="editSelectColonia" th:field="*{Colonia.IdColonia}" required>
+                            <option th:each="colonia : ${colonias}" th:value="${colonia.IdColonia}" th:text="${colonia.Nombre}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary shadow-sm">Actualizar Dirección</button>
+            </div>
+        </form>
+        
+    </div>
+</body>
+</html>

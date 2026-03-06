@@ -1,0 +1,76 @@
+.col-acciones {
+    width: 1%;
+    white-space: nowrap;
+    vertical-align: top;
+    padding-top: 1rem !important;
+}
+
+.cell-content {
+    min-width: 50px;
+}
+
+.data-label {
+    font-size: .075rem;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.rounded-custom {
+    border-radius: 20px;
+}
+
+.profile-img-container {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 15px;
+    background-color: #e9ecef;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #6c757d;
+}
+
+
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    background-color: #e9ecef;
+    color: #0d6efd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.badge-soft-success {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: #198754;
+    border: 1px solid rgba(25, 135, 84, 0.2);
+}
+
+.table>tbody>tr>td {
+    vertical-align: middle;
+    /* Centra el contenido verticalmente */
+}
+
+.address-card {
+    background-color: #f8f9fa;
+    border-left: 3px solid #0dcaf0;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.form-section-title {
+    color: #0d6efd;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    margin-top: 2rem;
+}

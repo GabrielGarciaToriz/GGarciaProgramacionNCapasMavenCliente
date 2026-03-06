@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <th:block th:replace="~{components/head :: recursos}"></th:block>
+    <script type="module" th:src="@{/js/main.js}"></script>
+    <title>Perfil de usuario</title>
+
+</head>
+
+<body class="bg-light py-5" data-page="UsuarioDetail">
+    <div class="container">
+        <a th:href="@{/usuario}" class="btn btn-warning mb-4"><i class="bi bi-arrow-return-left"></i> Regresar</a>
+
+        <div class="card shadow-sm rounded-custom border-0 overflow-hidden">
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-12 col-lg-4">
+                        <div class="card h-100 border-light bg-light rounded-custom">
+                            <div class="card-body text-center">
+                                <div class="profile-img-container shadow-sm mb-3">
+                                    <i class="bi bi-person display-4"></i>
+                                </div>
+                                <h4 class="card-title mb-1">
+                                    <span th:text="${usuario.Nombre}"></span>
+                                    <span th:text="${usuario.ApellidoPaterno}"></span>
+                                    <span th:text="${usuario.ApellidoMaterno}"></span>
+                                </h4>
+                                <p class="text-muted mb-4" th:text="${usuario.Rol.Nombre}"></p>
+
+                                <ul class="list-group list-group-flush text-start rounded-3 mb-4">
+                                    <li
+                                        class="list-group-item d-flex flex-wrap justify-content-between align-items-center bg-transparent gap-2">
+                                        <strong>Sexo:</strong>
+                                        <span class="text-secondary text-end" th:text="${usuario.Sexo}"></span>
+                                    </li>
+                                    <li
+                                        class="list-group-item d-flex flex-wrap justify-content-between align-items-center bg-transparent gap-2">
+                                        <strong>CURP:</strong>
+                                        <span class="text-secondary text-end text-break"
+                                            th:text="${usuario.Curp}"></span>
+                                    </li>
+                                    <li
+                                        class="list-group-item d-flex flex-wrap justify-content-between align-items-center bg-transparent gap-2">
+                                        <strong>Celular:</strong>
+                                        <span class="text-secondary text-end" th:text="${usuario.Celular}"></span>
+                                    </li>
+                                    <li
+                                        class="list-group-item d-flex flex-wrap justify-content-between align-items-center bg-transparent gap-2">
+                                        <strong>Teléfono:</strong>
+                                        <span class="text-secondary text-end" th:text="${usuario.Telefono}"></span>
+                                    </li>
+                                    <li
+                                        class="list-group-item d-flex flex-wrap justify-content-between align-items-center bg-transparent gap-2">
+                                        <strong>Correo:</strong>
+                                        <span class="text-secondary text-end text-break"
+                                            th:text="${usuario.Email}"></span>
+                                    </li>
+                                    <li
+                                        class="list-group-item d-flex flex-wrap justify-content-between align-items-center bg-transparent gap-2">
+                                        <strong>Nacimiento:</strong>
+                                        <span class="text-secondary text-end"
+                                            th:text="${usuario.FechaNacimiento}"></span>
+                                    </li>
+                                </ul>
+
+                                <button class="btn btn-primary w-100 rounded-pill" data-bs-toggle="modal"
+                                    data-bs-target="#ModalEditarPerfil">
+                                    <i class="bi bi-pencil-square me-2"></i>Editar Perfil
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-8">
+                        <div class="card h-100 border-light rounded-custom">
+                            <div
+                                class="card-header bg-white border-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                                <h5 class="mb-0">Mis Direcciones</h5>
+
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill"
+                                        data-bs-toggle="modal" data-bs-target="#ModalAgregarDireccion">
+                                        <i class="bi bi-plus-lg"></i> Nueva
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item p-3 border rounded-3 mb-3 shadow-sm"
+                                        th:each="direccion : ${usuario.direcciones}">
+                                        <div class="row align-items-center g-3">
+                                            <div class="col-12 col-md-8">
+                                                <p class="text-muted small mb-0 text-break"
+                                                    th:text="|${direccion.Calle} #${direccion.NumeroExterior} ${direccion.NumeroInterior}, Col. ${direccion.Colonia.Nombre}, ${direccion.Colonia.Municipio.Nombre}, ${direccion.Colonia.Municipio.Estado.Nombre}, ${direccion.Colonia.Municipio.Estado.Pais.Nombre}|">
+                                                </p>
+                                            </div>
+                                            <div class="col-12 col-md-4 text-md-end text-start">
+                                                <div class="btn-group" role="group">
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                        title="Editar"
+                                                        th:onclick="'abrirModalEdicionDireccion(' + ${direccion.IdDireccion} + ')'">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </button>
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-danger btn-eliminar-direccion"
+                                                        title="Eliminar"
+                                                        th:data-url="@{/usuario/detail/delete/direccion/{IdDireccion}(IdDireccion=${direccion.IdDireccion})}">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModalEditarPerfil" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="modalEditarUsuarioLabel">
+                        <i class="bi bi-pencil-square me-2"></i>Editar Datos de Usuario
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form method="post" th:action="@{/usuario/editarUsuario}" th:object="${usuario}">
+
+                    <input type="hidden" th:field="*{IdUsuario}" />
+                    <input type="hidden" th:field="*{Password}" />
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Usuario</label>
+                                <input type="text" class="form-control" th:field="*{UserName}" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="Rol" class="form-label">Rol del Sistema</label>
+                                <select name="Rol" id="Rol" class="form-select" th:field="*{Rol.IdRol}"
+                                    th:errorclass="is-invalid">
+                                    <option value="0">Seleccione una opción</option>
+                                    <option th:each="rol : ${roles}" th:value="${rol.IdRol}"
+                                        th:text="|${rol.Nombre} ${rol.IdRol}|">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Correo Electrónico</label>
+                                <input type="email" class="form-control" th:field="*{Email}" required />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Nombre(s)</label>
+                                <input type="text" class="form-control" th:field="*{Nombre}" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Apellido Paterno</label>
+                                <input type="text" class="form-control" th:field="*{ApellidoPaterno}" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Apellido Materno</label>
+                                <input type="text" class="form-control" th:field="*{ApellidoMaterno}" required />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">CURP</label>
+                                <input type="text" class="form-control text-uppercase" th:field="*{Curp}" maxlength="18"
+                                    required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Fecha de Nacimiento</label>
+                                <input type="date" class="form-control" th:field="*{FechaNacimiento}" required />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Sexo</label>
+                                <select class="form-select" th:field="*{Sexo}">
+                                    <option value="M">Hombre</option>
+                                    <option value="F">Mujer</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Celular</label>
+                                <input type="text" class="form-control" th:field="*{Celular}" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Teléfono Fijo</label>
+                                <input type="text" class="form-control" th:field="*{Telefono}" />
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-warning shadow-sm">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModalAgregarDireccion" tabindex="-1" aria-labelledby="modalAgregarDireccionLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="modalAgregarDireccionLabel">
+                        <i class="bi bi-geo-alt me-2"></i>Agregar Nueva Dirección
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+
+                <form method="post" th:action="@{/usuario/agregarDireccion}" th:object="${nuevaDireccion}">
+
+                    <input type="hidden" name="IdUsuario" th:value="${usuario.IdUsuario}" />
+
+                    <div class="modal-body">
+                        <h5 class="form-section-title"><i class="bi bi-geo-alt me-2"></i>Dirección</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="Calle" class="form-label">Calle</label>
+                                <input type="text" class="form-control validar-direccion validar-direccion-blur"
+                                    id="Calle" placeholder="Ej. Avenida Reforma" th:field="*{Calle}" />
+                                <span id="errorCalle" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="NumeroExterior" class="form-label">Núm. Exterior</label>
+                                <input type="text" class="form-control validar-direccion validar-direccion-blur"
+                                    id="NumeroExterior" placeholder="Ej. 123" th:field="*{NumeroExterior}" />
+                                <span id="errorNumeroExterior" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="NumeroInterior" class="form-label">Núm. Interior</label>
+                                <input type="text" class="form-control validar-direccion validar-direccion-blur"
+                                    id="NumeroInterior" placeholder="Opcional" th:field="*{NumeroInterior}" />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="CodigoPostal" class="form-label">Código Postal</label>
+                                <input type="text" placeholder="Ej. 57710" class="form-control" id="CodigoPostal"
+                                    required />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="selectPais" class="form-label">País</label>
+                                <select name="selectPais" id="selectPais" class="form-select"
+                                    th:field="*{Colonia.Municipio.Estado.Pais.IdPais}">
+                                    <option value="0" selected>Seleccione un país</option>
+                                    <option th:each="pais : ${paises}" th:value="${pais.IdPais}"
+                                        th:text="${pais.Nombre}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="selectEstado" class="form-label">Estado</label>
+                                <select name="selectEstado" id="selectEstado" class="form-select"
+                                    th:field="*{Colonia.Municipio.Estado.IdEstado}">
+                                    <option value="0" selected>Selecciona un estado</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="selectMunicipio" class="form-label">Municipio</label>
+                                <select name="selectMunicipio" id="selectMunicipio" class="form-select"
+                                    th:field="*{Colonia.Municipio.IdMunicipio}">
+                                    <option value="0" selected>Selecciona un municipio</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="selectColonia" class="form-label">Colonia</label>
+                                <select name="selectColonia" id="selectColonia" class="form-select"
+                                    th:field="*{Colonia.IdColonia}">
+                                    <option value="0" selected>Selecciona una colonia</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success shadow-sm">Guardar Dirección</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="ModalEditarDireccionDinamico" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" id="contenedorModalEditarDireccion">
+                <div class="modal-body text-center p-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="mensajeExito" th:if="${mensajeExito != null}" th:value="${mensajeExito}">
+    <input type="hidden" id="mensajeError" th:if="${mensajeError != null}" th:value="${mensajeError}">
+</body>
+
+</html>

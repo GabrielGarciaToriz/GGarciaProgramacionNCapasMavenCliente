@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{components/head :: recursos}"></th:block>
+    <script type="module" th:src="@{/js/main.js}"></script>
+    <title>Carga Masiva</title>
+</head>
+
+<body class="bg-light" data-page="UsuarioCargaMasiva">
+    <div id="mostrarFormulario" style="display: none;"></div>
+
+    <div class="container min-vh-100 d-flex justify-content-center align-items-center">
+
+        <div class="card shadow-lg border-0 rounded-4" style="max-width: 500px; width: 100%;">
+
+            <div class="card-header bg-white border-bottom py-3 text-center rounded-top-4">
+                <h4 class="mb-0 fw-bold text-success">
+                    <i class="bi bi-cloud-arrow-up-fill me-2"></i>Carga Masiva
+                </h4>
+                <p class="text-muted small mb-0 mt-1">Sube tu archivo de usuarios</p>
+            </div>
+
+            <div class="card-body p-4">
+                <form th:action="@{/usuario/procesarCargaMasiva}" method="post" enctype="multipart/form-data">
+                    <div th:if="${errores != null and !errores.isEmpty()}"
+                        class="alert alert-danger rounded-3 shadow-sm mb-4">
+                        <h6 class="alert-heading fw-bold mb-2">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Se encontraron errores en el archivo:
+                        </h6>
+                        <ul class="mb-0 small">
+                            <li th:each="error : ${errores}"
+                                th:text="'Fila ' + ${error.fila} + ' - [' + ${error.dato} + '] ' + ${error.descripcion}">
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="botones" class="mb-4">
+                        <label class="form-label fw-semibold text-secondary small text-uppercase">1. Formato de
+                            origen</label>
+                        <div class="d-flex gap-4 p-3 bg-light rounded-3 border">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipoArchivo" id="btnExcel"
+                                    value="excel">
+                                <label class="form-check-label fw-medium" for="btnExcel">
+                                    <i class="bi bi-file-earmark-excel-fill text-success me-1"></i> Excel (.xlsx)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipoArchivo" id="btnTxt" value="txt">
+                                <label class="form-check-label fw-medium" for="btnTxt">
+                                    <i class="bi bi-filetype-txt text-secondary me-1"></i> Texto (.txt)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:if="${mensajeError != null}" class="alert alert-danger rounded-3 shadow-sm mb-4">
+                        <h6 class="alert-heading fw-bold mb-0">
+                            <i class="bi bi-x-circle-fill me-2"></i><span th:text="${mensajeError}"></span>
+                        </h6>
+                    </div>
+                    <div id="formularioArchivo"
+                        th:style="${(errores != null and !errores.isEmpty()) or mensajeError != null} ? 'display: block;' : 'display: none;'">
+                        <div class="mb-4">
+                            <label for="archivo" class="form-label fw-semibold text-secondary small text-uppercase">2.
+                                Seleccionar Archivo</label>
+                            <input class="form-control form-control-lg" type="file" id="archivo" name="archivo"
+                                required>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" id="cargaMasiva"
+                                class="btn btn-success btn-lg rounded-pill shadow-sm">
+                                <i class="bi bi-upload me-2"></i>Subir y Procesar
+                            </button>
+                            <a th:href="@{/usuario}" class="btn btn-outline-secondary rounded-pill mt-2">
+                                <i class="bi bi-arrow-left me-1"></i> Cancelar y volver
+                            </a>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>
