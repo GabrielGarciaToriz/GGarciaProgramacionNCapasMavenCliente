@@ -1,4 +1,4 @@
-package com.digis01.GGarciaProgramacionNCapasMaven.ML;
+package com.digis01.GGarciaProgramacionNCapasMavenCliente.ML;
 
 public class ErroresArchivo {
 

@@ -1,4 +1,4 @@
-import { cargarSelectCascada } from '../Helpers/HelpersUI.js'; // Ajusta la ruta según tu proyecto
+import { cargarSelectCascada, API_BASE_URL } from '../Helpers/HelpersUI.js'; // Ajusta la ruta según tu proyecto
 
 export function PaisEstado() {
     const $selectPais = $("#selectPais");
@@ -9,11 +9,11 @@ export function PaisEstado() {
     $selectPais.change(function () {
         cargarSelectCascada(
             $(this).val(), 
-            "/usuario/getEstadoByPais/", 
+            `${API_BASE_URL}/api/estado/`, 
             $selectEstado, 
             "Selecciona un estado", 
-            "IdEstado",   
-            "Nombre",    
+            "idEstado",   
+            "nombre",    
             [
                 { $el: $selectMunicipio, texto: "Selecciona un municipio" },
                 { $el: $selectColonia, texto: "Selecciona una colonia" }

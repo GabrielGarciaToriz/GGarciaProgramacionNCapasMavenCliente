@@ -156,9 +156,9 @@
               <div class="col-md-3">
                 <label for="selectPais" class="form-label">País</label>
                 <select name="selectPais" id="selectPais" class="form-select"
-                  th:field="*{Direcciones[0].Colonia.Municipio.Estado.Pais.IdPais}">
+                  th:field="*{direcciones[0].colonia.municipio.estado.pais.idPais}">
                   <option value="0" selected>Seleccione un país</option>
-                  <option th:each="pais : ${paises}" th:value="${pais.IdPais}" th:text="${pais.Nombre}"></option>
+                  <option th:each="pais : ${paises}" th:value="${pais.idPais}" th:text="${pais.nombre}"></option>
                 </select>
               </div>
               <div class="col-md-3">

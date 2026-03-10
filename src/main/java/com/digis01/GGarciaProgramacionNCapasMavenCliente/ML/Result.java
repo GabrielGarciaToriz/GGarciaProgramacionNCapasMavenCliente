@@ -1,4 +1,4 @@
-package com.digis01.GGarciaProgramacionNCapasMaven.ML;
+package com.digis01.GGarciaProgramacionNCapasMavenCliente.ML;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ public class Result <T>{
     public boolean correct;
     public String errorMessage;
     public Exception ex;
-    public Object object;
+    public T object;
     public List<T> objects;
     
 }

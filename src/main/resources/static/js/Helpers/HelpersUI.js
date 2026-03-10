@@ -1,3 +1,5 @@
+export const API_BASE_URL = "http://localgost:8081"
+
 export const mostrarError = (input, mensaje) => {
     const errorSpan = $(`#error${input.id}`);
     errorSpan.text(mensaje).css("color", "red");
@@ -31,7 +33,7 @@ export const cargarSelectCascada = (id, urlBase, $target, targetTexto, idKey, na
             dataType: "json",
             success: (data) => {
                 let opciones = `<option value="0" selected>${targetTexto}</option>`;
-                data.objects.forEach(item => {
+                data.forEach(item => {
                     opciones += `<option value="${item[idKey]}"> ${item[nameKey]}</option>`
                 });
                 $target.html(opciones)

@@ -1,15 +1,16 @@
+import { API_BASE_URL } from "../Helpers/HelpersUI.js";
+
 export function DireccionByCodigoPostal() {
     $("#CodigoPostal").change(function () {
         var codigoPostal = $("#CodigoPostal").val();
 
         if (codigoPostal !== "") {
             $.ajax({
-                url: "/usuario/getDireccionByCodigoPostal/" + codigoPostal,
+                url: `${API_BASE_URL}/api/colonia/codigopostal/` + codigoPostal,
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
-                    // Verificamos que el JSON traiga resultados
-                    if (data.objects && data.objects.length > 0) {
+                    if (data && data.objects.length > 0) {
 
                         var primeraColonia = data.objects[0];
 
@@ -32,7 +33,7 @@ export function DireccionByCodigoPostal() {
                         $("#selectColonia").empty();
                         $("#selectColonia").append('<option value="0">Selecciona una colonia</option>');
 
-                        $.each(data.objects, function (i, colonia) {
+                        $.each(data, function (i, colonia) {
                             $("#selectColonia").append(
                                 `<option value="${colonia.IdColonia}" data-cp="${colonia.CodigoPostal}">${colonia.Nombre}</option>`
                             );
@@ -68,14 +69,14 @@ export function CascadeoUbicacion() {
 
         if (idMunicipio != "0") {
             $.ajax({
-                url: "/usuario/getColoniabyMunicipio/" + idMunicipio,
+                url: `${API_BASE_URL}/api/colonia/` + idMunicipio,
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
                     $("#selectColonia").empty();
                     $("#selectColonia").append('<option value="0" data-cp="">Selecciona una colonia</option>');
 
-                    $.each(data.objects, function (i, colonia) {
+                    $.each(data, function (i, colonia) {
                         $("#selectColonia").append(
                             `<option value="${colonia.IdColonia}" data-cp="${colonia.CodigoPostal}">${colonia.Nombre}</option>`
                         );

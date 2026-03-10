@@ -1,4 +1,4 @@
-package com.digis01.GGarciaProgramacionNCapasMaven;
+package com.digis01.GGarciaProgramacionNCapasMavenCliente;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
