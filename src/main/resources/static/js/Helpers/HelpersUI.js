@@ -33,9 +33,13 @@ export const cargarSelectCascada = (id, urlBase, $target, targetTexto, idKey, na
             dataType: "json",
             success: (data) => {
                 let opciones = `<option value="0" selected>${targetTexto}</option>`;
-                data.forEach(item => {
-                    opciones += `<option value="${item[idKey]}"> ${item[nameKey]}</option>`
-                });
+                
+                if (data && data.correct && data.objects) {
+                    data.objects.forEach(item => { // Ahora iteramos sobre data.objects
+                        opciones += `<option value="${item[idKey]}"> ${item[nameKey]}</option>`
+                    });
+                }
+                
                 $target.html(opciones)
             },
             error: () => alert("No se pudo completar la tarea")

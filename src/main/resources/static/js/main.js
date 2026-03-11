@@ -139,6 +139,15 @@ $(document).ready(() => {
             initFormularioUsuario();
             break;
 
+        case 'UsuarioDetail':
+            inicializarSelectores();
+            $(".btn-eliminar-direccion").on("click", function (event) {
+                event.preventDefault();
+                const url = $(this).data("url");
+                confirmarEliminacionDireccion(url);
+            });
+            break;
+
         case 'UsuarioCargaMasiva':
             initCargaMasiva();
             break;

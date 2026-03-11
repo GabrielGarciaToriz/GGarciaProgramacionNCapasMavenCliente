@@ -11,8 +11,8 @@ export function EstadoMunicipio() {
             `${API_BASE_URL}/api/municipio/`,
             $selectMunicipio,
             "Selecciona un municipio",
-            "IdMunicipio",
-            "Nombre",
+            "idMunicipio", 
+            "nombre",      
             [
                 { $el: $selectColonia, texto: "Selecciona una colonia" }
             ]

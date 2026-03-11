@@ -18,8 +18,25 @@
                     <div class="col-12 col-lg-4">
                         <div class="card h-100 border-light bg-light rounded-custom">
                             <div class="card-body text-center">
-                                <div class="profile-img-container shadow-sm mb-3">
-                                    <i class="bi bi-person display-4"></i>
+                                <div class="position-relative d-inline-block mb-3">
+                                    <div class="profile-img-container shadow-sm mx-auto"
+                                        style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid #fff; overflow: hidden;">
+                                        <img th:if="${usuario.Imagen != null and !usuario.Imagen.isEmpty()}"
+                                            th:src="'data:image/jpeg;base64,' + ${usuario.Imagen}" alt="Avatar"
+                                            class="w-100 h-100" style="object-fit: cover;">
+
+                                        <img th:unless="${usuario.Imagen != null and !usuario.Imagen.isEmpty()}"
+                                            th:src="@{/img/default-avatar.png}" alt="Avatar Default" class="w-100 h-100"
+                                            style="object-fit: cover;">
+                                    </div>
+
+                                    <button
+                                        class="btn btn-sm btn-primary position-absolute bottom-0 end-0 rounded-circle shadow"
+                                        data-bs-toggle="modal" data-bs-target="#ModalEditarImagen"
+                                        title="Actualizar foto de perfil"
+                                        style="width: 35px; height: 35px; transform: translate(-5px, -5px);">
+                                        <i class="bi bi-camera-fill"></i>
+                                    </button>
                                 </div>
                                 <h4 class="card-title mb-1">
                                     <span th:text="${usuario.Nombre}"></span>
@@ -149,8 +166,7 @@
                                 <select name="Rol" id="Rol" class="form-select" th:field="*{Rol.IdRol}"
                                     th:errorclass="is-invalid">
                                     <option value="0">Seleccione una opción</option>
-                                    <option th:each="rol : ${roles}" th:value="${rol.IdRol}"
-                                        th:text="|${rol.Nombre} ${rol.IdRol}|">
+                                    <option th:each="rol : ${roles}" th:value="${rol.IdRol}" th:text="|${rol.Nombre}|">
                                     </option>
                                 </select>
                             </div>
@@ -303,6 +319,40 @@
                         <span class="visually-hidden">Cargando...</span>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModalEditarImagen" tabindex="-1" aria-labelledby="modalEditarImagenLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fs-6" id="modalEditarImagenLabel">
+                        <i class="bi bi-image me-2"></i>Actualizar Foto
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+
+                <form method="post" th:action="@{/usuario/actualizarImagen}" enctype="multipart/form-data">
+
+                    <input type="hidden" name="idUsuario" th:value="${usuario.IdUsuario}" />
+
+                    <div class="modal-body text-center">
+                        <p class="small text-muted mb-3">Selecciona una nueva imagen en formato JPG o PNG.</p>
+                        <input type="file" class="form-control form-control-sm" id="imagenFile" name="imagenFile"
+                            accept="image/*" required />
+                    </div>
+
+                    <div class="modal-footer justify-content-center bg-light border-0">
+                        <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3"
+                            data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary btn-sm rounded-pill shadow-sm px-3">
+                            <i class="bi bi-cloud-arrow-up me-1"></i>Subir
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

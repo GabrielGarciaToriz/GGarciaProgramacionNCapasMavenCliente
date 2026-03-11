@@ -22,10 +22,17 @@
         </div>
 
         <div class="card-body p-4 p-md-5">
-          <form method="post" th:action="@{/usuario/form}" th:object="${usuario}" enctype="multipart/form-data"
+          <form method="post" th:action="@{/usuario/add}" th:object="${usuario}" enctype="multipart/form-data"
             autocomplete="off">
 
             <h5 class="form-section-title mt-0"><i class="bi bi-shield-lock me-2"></i>Datos de la Cuenta</h5>
+            <div class="col-md-12 mt-3">
+              <label for="ImagenFile" class="form-label">Foto de Perfil</label>
+              <input type="file" class="form-control" id="ImagenFile" name="imagenFile" accept="image/*" />
+              <div class="form-text text-muted small">
+                <i class="bi bi-info-circle me-1"></i>Si no seleccionas una, se asignará un avatar por defecto.
+              </div>
+            </div>
             <div class="row g-3 mb-4">
               <div class="col-md-4">
                 <label for="UserName" class="form-label">Usuario</label>
@@ -44,16 +51,16 @@
               <div class="col-md-4">
                 <label for="Password" class="form-label">Contraseña</label>
                 <input type="password" class="form-control validar-password validar-password-blur" id="Password"
-                  placeholder="••••••••" th:field="*{Password}" th:errorclass="is-invalid"/>
+                  placeholder="••••••••" th:field="*{Password}" th:errorclass="is-invalid" />
 
                 <span th:if="${#fields.hasErrors('Password')}" th:errors="*{Password}" class="text-danger small"></span>
                 <span id="errorPassword" class="text-danger small"></span>
               </div>
               <div class="col-md-4">
                 <label for="Rol" class="form-label">Rol del Sistema</label>
-                <select name="Rol" id="Rol" class="form-select" th:field="*{Rol.IdRol}" th:errorclass="is-invalid">
+                <select name="Rol" id="Rol" class="form-select" th:field="*{rol.idRol}" th:errorclass="is-invalid">
                   <option value="0">Seleccione una opción</option>
-                  <option th:each="rol : ${roles}" th:value="${rol.IdRol}" th:text="${rol.Nombre}"></option>
+                  <option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.nombre}"></option>
                 </select>
               </div>
             </div>
@@ -63,14 +70,14 @@
               <div class="col-md-4">
                 <label for="Nombre" class="form-label">Nombre(s)</label>
                 <input type="text" class="form-control validar-letras validar-letras-blur" id="Nombre"
-                  placeholder="Ej. Gabriel" th:field="*{Nombre}" required />
+                  placeholder="Ej. Gabriel" th:field="*{nombre}" required />
                 <span th:if="${#fields.hasErrors('Nombre')}" th:errors="*{Nombre}" class="text-danger small"></span>
                 <span id="errorNombre" class="text-danger small"></span>
               </div>
               <div class="col-md-4">
                 <label for="ApellidoPaterno" class="form-label">Apellido Paterno</label>
                 <input type="text" class="form-control validar-letras validar-letras-blur" id="ApellidoPaterno"
-                  placeholder="Ej. García" th:field="*{ApellidoPaterno}" required />
+                  placeholder="Ej. García" th:field="*{apellidoPaterno}" required />
                 <span th:if="${#fields.hasErrors('ApellidoPaterno')}" th:errors="*{ApellidoPaterno}"
                   class="text-danger small"></span>
                 <span id="errorApellidoPaterno" class="text-danger small"></span>
@@ -78,7 +85,7 @@
               <div class="col-md-4">
                 <label for="ApellidoMaterno" class="form-label">Apellido Materno</label>
                 <input type="text" class="form-control validar-letras validar-letras-blur" id="ApellidoMaterno"
-                  placeholder="Ej. Toríz" th:field="*{ApellidoMaterno}" required />
+                  placeholder="Ej. Toríz" th:field="*{apellidoMaterno}" required />
                 <span th:if="${#fields.hasErrors('ApellidoMaterno')}" th:errors="*{ApellidoMaterno}"
                   class="text-danger small"></span>
                 <span id="errorApellidoMaterno" class="text-danger small"></span>
@@ -87,26 +94,26 @@
               <div class="col-md-4">
                 <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento</label>
                 <input type="date" class="form-control solo-calendario abrir-calendario" id="FechaNacimiento"
-                  th:field="*{FechaNacimiento}" th:max="${fechaMaxima}" required />
+                  th:field="*{fechaNacimiento}" th:max="${fechaMaxima}" required />
                 <span th:if="${#fields.hasErrors('FechaNacimiento')}" th:errors="*{FechaNacimiento}"
                   class="text-danger small"></span>
               </div>
               <div class="col-md-4">
                 <label for="Curp" class="form-label">Clave CURP</label>
                 <input type="text" class="form-control text-uppercase validar-curp validar-curp-blur" id="Curp"
-                  placeholder="Ingrese los 18 caracteres" maxlength="18" th:field="*{Curp}" required />
+                  placeholder="Ingrese los 18 caracteres" maxlength="18" th:field="*{curp}" required />
                 <span th:if="${#fields.hasErrors('Curp')}" th:errors="*{Curp}" class="text-danger small"></span>
                 <span id="errorCurp" class="text-danger small"></span>
               </div>
               <div class="col-md-4">
                 <label class="form-label d-block">Sexo</label>
                 <div class="form-check form-check-inline mt-2">
-                  <input type="radio" class="form-check-input" id="rbHombre" th:field="*{Sexo}" value="M"
+                  <input type="radio" class="form-check-input" id="rbHombre" th:field="*{sexo}" value="M"
                     th:errorclass="is-invalid" />
                   <label for="rbHombre" class="form-check-label">Hombre</label>
                 </div>
                 <div class="form-check form-check-inline mt-2">
-                  <input type="radio" class="form-check-input" id="rbMujer" th:field="*{Sexo}" value="F"
+                  <input type="radio" class="form-check-input" id="rbMujer" th:field="*{sexo}" value="F"
                     th:errorclass="is-invalid" />
                   <label for="rbMujer" class="form-check-label">Mujer</label>
                 </div>
@@ -116,14 +123,14 @@
               <div class="col-md-4">
                 <label for="Celular" class="form-label">Celular</label>
                 <input type="text" class="form-control validar-celular validar-celular-blur" id="Celular"
-                  placeholder="Ej. 5512345678" th:field="*{Celular}" required />
+                  placeholder="Ej. 5512345678" th:field="*{celular}" required />
                 <span id="errorCelular" class="text-danger small"></span>
                 <span th:if="${#fields.hasErrors('Celular')}" th:errors="*{Celular}" class="text-danger small"></span>
               </div>
               <div class="col-md-4">
                 <label for="Telefono" class="form-label">Teléfono Fijo</label>
                 <input type="text" class="form-control validar-telefono validar-telefono-blur" id="Telefono"
-                  placeholder="Ej. 5512345678" th:field="*{Telefono}" required />
+                  placeholder="Ej. 5512345678" th:field="*{telefono}" required />
                 <span id="errorTelefono" class="text-danger small"></span>
                 <span th:if="${#fields.hasErrors('Telefono')}" th:errors="*{Telefono}" class="text-danger small"></span>
               </div>
@@ -134,19 +141,19 @@
               <div class="col-md-6">
                 <label for="Calle" class="form-label">Calle</label>
                 <input type="text" class="form-control validar-direccion validar-direccion-blur" id="Calle"
-                  placeholder="Ej. Avenida Reforma" th:field="*{Direcciones[0].Calle}" />
+                  placeholder="Ej. Avenida Reforma" th:field="*{direcciones[0].calle}" />
                 <span id="errorCalle" class="text-danger small"></span>
               </div>
               <div class="col-md-3">
                 <label for="NumeroExterior" class="form-label">Núm. Exterior</label>
                 <input type="text" class="form-control validar-direccion validar-direccion-blur" id="NumeroExterior"
-                  placeholder="Ej. 123" th:field="*{Direcciones[0].NumeroExterior}" />
+                  placeholder="Ej. 123" th:field="*{direcciones[0].numeroExterior}" />
                 <span id="errorNumeroExterior" class="text-danger small"></span>
               </div>
               <div class="col-md-3">
                 <label for="NumeroInterior" class="form-label">Núm. Interior</label>
                 <input type="text" class="form-control validar-direccion validar-direccion-blur" id="NumeroInterior"
-                  placeholder="Opcional" th:field="*{Direcciones[0].NumeroInterior}" />
+                  placeholder="Opcional" th:field="*{direcciones[0].numeroInterior}" />
               </div>
 
               <div class="col-md-3">
@@ -164,21 +171,21 @@
               <div class="col-md-3">
                 <label for="selectEstado" class="form-label">Estado</label>
                 <select name="selectEstado" id="selectEstado" class="form-select"
-                  th:field="*{Direcciones[0].Colonia.Municipio.Estado.IdEstado}">
+                  th:field="*{direcciones[0].colonia.municipio.estado.idEstado}">
                   <option value="0" selected>Selecciona un estado</option>
                 </select>
               </div>
               <div class="col-md-3">
                 <label for="selectMunicipio" class="form-label">Municipio</label>
                 <select name="selectMunicipio" id="selectMunicipio" class="form-select"
-                  th:field="*{Direcciones[0].Colonia.Municipio.IdMunicipio}">
+                  th:field="*{direcciones[0].colonia.municipio.idMunicipio}">
                   <option value="0" selected>Selecciona un municipio</option>
                 </select>
               </div>
               <div class="col-md-12">
                 <label for="selectColonia" class="form-label">Colonia</label>
                 <select name="selectColonia" id="selectColonia" class="form-select"
-                  th:field="*{Direcciones[0].Colonia.IdColonia}">
+                  th:field="*{direcciones[0].colonia.idColonia}">
                   <option value="0" selected>Selecciona una colonia</option>
                 </select>
               </div>

@@ -15,10 +15,10 @@ export function DireccionByCodigoPostal() {
                         const primeraColonia = data.objects[0];
 
                         const idPais = primeraColonia.municipio.estado.pais.idPais;
-                        const idEstado = primeraColonia.Municipio.estado.idEstado;
-                        const nombreEstado = primeraColonia.Municipio.Estado.Nombre;
-                        const idMunicipio = primeraColonia.Municipio.IdMunicipio;
-                        const nombreMunicipio = primeraColonia.Municipio.Nombre;
+                        const idEstado = primeraColonia.municipio.estado.idEstado;
+                        const nombreEstado = primeraColonia.municipio.estado.nombre;
+                        const idMunicipio = primeraColonia.municipio.idMunicipio;
+                        const nombreMunicipio = primeraColonia.municipio.nombre;
 
                         $("#selectPais").val(idPais);
 
@@ -35,7 +35,7 @@ export function DireccionByCodigoPostal() {
 
                         $.each(data.objects, function (i, colonia) {
                             $("#selectColonia").append(
-                                `<option value="${colonia.IdColonia}" data-cp="${colonia.CodigoPostal}">${colonia.Nombre}</option>`
+                                `<option value="${colonia.idColonia}" data-cp="${colonia.codigoPostal}">${colonia.nombre}</option>`
                             );
                         });
 
@@ -61,7 +61,6 @@ export function DireccionByCodigoPostal() {
             .append('<option value="0" selected>Selecciona una opción</option>');
     }
 }
-
 export function CascadeoUbicacion() {
 
     $("#selectMunicipio").change(function () {
@@ -76,11 +75,15 @@ export function CascadeoUbicacion() {
                     $("#selectColonia").empty();
                     $("#selectColonia").append('<option value="0" data-cp="">Selecciona una colonia</option>');
 
-                    $.each(data, function (i, colonia) {
-                        $("#selectColonia").append(
-                            `<option value="${colonia.IdColonia}" data-cp="${colonia.CodigoPostal}">${colonia.Nombre}</option>`
-                        );
-                    });
+                    // CORREGIDO: Validamos que exista data.objects e iteramos sobre él
+                    if (data && data.correct && data.objects) {
+                        $.each(data.objects, function (i, colonia) {
+                            // CORREGIDO: idColonia, codigoPostal y nombre en camelCase
+                            $("#selectColonia").append(
+                                `<option value="${colonia.idColonia}" data-cp="${colonia.codigoPostal}">${colonia.nombre}</option>`
+                            );
+                        });
+                    }
                 },
                 error: function () {
                     alert("Error al cargar las colonias.");

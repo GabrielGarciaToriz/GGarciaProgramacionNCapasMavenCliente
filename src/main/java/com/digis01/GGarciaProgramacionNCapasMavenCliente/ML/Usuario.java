@@ -28,6 +28,7 @@ public class Usuario {
     private int estatus;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechaNacimiento;
+    private String imagen;
     public Rol rol;
     public List<Direccion> direcciones;
 
