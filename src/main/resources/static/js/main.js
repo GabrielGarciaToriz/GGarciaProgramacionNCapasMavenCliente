@@ -6,7 +6,7 @@ import {
 } from "./Validaciones/index.js";
 
 import {
-    PaisEstado, EstadoMunicipio, MunicipioColonia, DireccionByCodigoPostal, CascadeoUbicacion
+    PaisEstado, EstadoMunicipio, DireccionByCodigoPostal, CascadeoUbicacion
 } from "./Selects/index.js";
 
 import { confirmarEliminacionDireccionUsuario, confirmarEliminacionDireccion, verificarAlertasServidor, abrirModalEdicionDireccion } from "./Helpers/index.js";
@@ -53,7 +53,6 @@ const aplicarValidaciones = () => {
 const inicializarSelectores = () => {
     PaisEstado();
     EstadoMunicipio();
-    MunicipioColonia();
     DireccionByCodigoPostal();
     CascadeoUbicacion();
 };
@@ -67,20 +66,16 @@ const initDirectorioUsuarios = () => {
     });
     $(".form-check-input[role='switch']").on("change", function () {
         const checkbox = $(this);
-        const idUsuario = checkbox.data("usuario-id");
-        const urlPeticion = checkbox.data("url");
+        const urlPeticionBase = checkbox.data("url");
         const nuevoEstatus = checkbox.is(":checked") ? 1 : 0;
+        const urlFinal = urlPeticionBase + nuevoEstatus;
 
         $.ajax({
             type: "POST",
-            url: urlPeticion, // Usamos la URL correcta del servidor
-            data: {
-                IdUsuario: idUsuario,
-                Estatus: nuevoEstatus
-            },
+            url: urlFinal,
             success: function (response) {
                 if (response.correct) {
-                    console.log("Estatus actualizado con éxito para el usuario:", idUsuario);
+                    console.log("Estatus actualizado con éxito para el usuario:", urlFinal);
                 } else {
                     console.error("Error en BD:", response.errorMessage);
                     checkbox.prop("checked", nuevoEstatus === 0);

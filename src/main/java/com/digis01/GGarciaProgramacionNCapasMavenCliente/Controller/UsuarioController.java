@@ -18,6 +18,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 
 @Controller
@@ -77,13 +78,37 @@ public class UsuarioController {
         });
 
         if (paises.getStatusCode().value() == 200 && roles.getStatusCode().value() == 200) {
-            Result resultPaises = paises.getBody();
-            Result resultRoles = roles.getBody();
-            model.addAttribute("paises", resultPaises.objects);
-            model.addAttribute("roles", resultRoles.objects);
+            Result<Pais> resultPaises = paises.getBody();
+            Result<Rol> resultRoles = roles.getBody();
+            if (resultPaises != null && resultRoles != null) {
+                model.addAttribute("paises", resultPaises.objects);
+                model.addAttribute("roles", resultRoles.objects);
+            }
+
         }
         model.addAttribute("usuario", usuario);
 
         return "UsuarioForm";
+    }
+
+    @GetMapping("/detail/{idUsuario}")
+    public String DetilUsuario(@PathVariable("idUsuario") int idUsuario, Model model) {
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Result<Usuario>> usuarioBusqueda = restTemplate.exchange(rutaBase + "/api/detail/" + idUsuario,
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<Result<Usuario>>() {
+        });
+        ResponseEntity<Result<Rol>> roles = restTemplate.exchange(rutaBase + "/api/rol",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<Result<Rol>>() {
+        });
+        if (usuarioBusqueda.getStatusCode().value() == 200) {
+            Result result = usuarioBusqueda.getBody();
+            model.addAttribute("usuario", result.objects.get(0));
+        }
+        return "UsuarioDetail";
+
     }
 }
