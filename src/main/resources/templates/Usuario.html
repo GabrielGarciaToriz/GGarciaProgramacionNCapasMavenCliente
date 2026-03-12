@@ -16,15 +16,15 @@
           <div class="row g-3 align-items-end">
             <div class="col-md-3">
               <label for="Nombre" class="form-label small text-muted">Nombre</label>
-              <input type="text" class="form-control" id="Nombre" th:field="*{Nombre}">
+              <input type="text" class="form-control" id="Nombre" th:field="*{nombre}">
             </div>
             <div class="col-md-2">
               <label for="ApellidoPaterno" class="form-label small text-muted">Apellido Paterno</label>
-              <input type="text" class="form-control" id="ApellidoPaterno" th:field="*{ApellidoPaterno}">
+              <input type="text" class="form-control" id="ApellidoPaterno" th:field="*{apellidoPaterno}">
             </div>
             <div class="col-md-2">
               <label for="ApellidoMaterno" class="form-label small text-muted">Apellido Materno</label>
-              <input type="text" class="form-control" id="ApellidoMaterno" th:field="*{ApellidoMaterno}">
+              <input type="text" class="form-control" id="ApellidoMaterno" th:field="*{apellidoMaterno}">
             </div>
             <div class="col-md-3">
               <label for="Rol" class="form-label small text-muted">Rol</label>
@@ -85,18 +85,18 @@
                     </div>
                     <div>
                       <div class="fw-bold text-dark"
-                        th:text="|${usuario.Nombre} ${usuario.ApellidoPaterno} ${usuario.ApellidoMaterno}|"></div>
+                        th:text="|${usuario.nombre} ${usuario.apellidoPaterno} ${usuario.apellidoMaterno}|"></div>
                       <div class="small text-muted">
-                        <span class="fw-medium text-secondary" th:text="${usuario.UserName}"></span> •
-                        <span class="badge badge-soft-success rounded-pill" th:text="${usuario.Rol.Nombre}"></span>
+                        <span class="fw-medium text-secondary" th:text="${usuario.userName}"></span> •
+                        <span class="badge badge-soft-success rounded-pill" th:text="${usuario.rol.nombre}"></span>
                       </div>
                     </div>
                   </div>
 
                   <div class="small text-muted mt-2 ps-1">
-                    <div class="mb-1"><i class="bi bi-upc-scan me-1"></i><span th:text="${usuario.Curp}"></span></div>
-                    <div><i class="bi bi-calendar3 me-1"></i><span th:text="${usuario.FechaNacimiento}"></span> (<span
-                        th:text="${usuario.Sexo}"></span>)</div>
+                    <div class="mb-1"><i class="bi bi-upc-scan me-1"></i><span th:text="${usuario.curp}"></span></div>
+                    <div><i class="bi bi-calendar3 me-1"></i><span th:text="${usuario.fechaNacimiento}"></span> (<span
+                        th:text="${usuario.sexo}"></span>)</div>
                   </div>
                 </td>
 
@@ -104,16 +104,16 @@
                   <ul class="list-unstyled mb-0 small text-secondary">
                     <li class="mb-2">
                       <i class="bi bi-envelope-at text-danger me-2"></i>
-                      <a th:href="'mailto:' + ${usuario.Email}" class="text-decoration-none text-secondary"
-                        th:text="${usuario.Email}"></a>
+                      <a th:href="'mailto:' + ${usuario.email}" class="text-decoration-none text-secondary"
+                        th:text="${usuario.email}"></a>
                     </li>
                     <li class="mb-2">
                       <i class="bi bi-telephone text-primary me-2"></i>
-                      <span th:text="${usuario.Telefono}"></span>
+                      <span th:text="${usuario.telefono}"></span>
                     </li>
                     <li>
                       <i class="bi bi-phone text-success me-2"></i>
-                      <span th:text="${usuario.Celular}"></span>
+                      <span th:text="${usuario.celular}"></span>
                     </li>
                   </ul>
                 </td>
@@ -125,13 +125,13 @@
                         <i class="bi bi-geo-alt-fill text-danger me-1"></i>
                         <span th:text="|${direccion.calle?: 'No definido'} #${direccion.numeroExterior}|"></span>
                         <span th:if="${direccion.numeroInterior !=null && !direccion.numeroInterior.isEmpty()}"
-                          th:text="|Int. ${direccion.NumeroInterior}|"></span>
+                          th:text="|Int. ${direccion.numeroInterior}|"></span>
                       </div>
                       <div class="text-secondary ms-3">
-                        <div th:if="${direccion.colonia.Nombre != null}"
-                          th:text="|Col. ${direccion.Colonia.Nombre}, ${direccion.Colonia.Municipio.Nombre}|"></div>
-                        <div class="text-muted" th:if="${direccion.Colonia.Nombre != null}"
-                          th:text="|${direccion.Colonia.Municipio.Estado.Nombre}, ${direccion.Colonia.Municipio.Estado.Pais.Nombre}|">
+                        <div th:if="${direccion.colonia.nombre != null}"
+                          th:text="|Col. ${direccion.colonia.nombre}, ${direccion.colonia.municipio.nombre}|"></div>
+                        <div class="text-muted" th:if="${direccion.colonia.nombre != null}"
+                          th:text="|${direccion.colonia.municipio.estado.nombre}, ${direccion.colonia.municipio.estado.pais.nombre}|">
                         </div>
                       </div>
                     </div>
@@ -141,21 +141,22 @@
                 <td class="text-center align-middle">
                   <div class="form-check form-switch d-flex justify-content-center">
                     <input class="form-check-input" type="checkbox" role="switch"
-                      th:id="'switchEstatus_' + ${usuario.IdUsuario}"
-                      th:checked="${usuario.Estatus != null and (#strings.toString(usuario.Estatus) == '1' or #strings.toString(usuario.Estatus) == 'true')}"
-                      th:data-usuario-id="${usuario.IdUsuario}" th:data-url="@{'http://localhost:8081/api/usuario/cambioStatus/'+${usuario.IdUsuario}+'/'}">
+                      th:id="'switchEstatus_' + ${usuario.idUsuario}"
+                      th:checked="${usuario.estatus != null and (#strings.toString(usuario.estatus) == '1' or #strings.toString(usuario.estatus) == 'true')}"
+                      th:data-usuario-id="${usuario.idUsuario}"
+                      th:data-url="@{'http://localhost:8081/api/usuario/cambioStatus/'+${usuario.idUsuario}+'/'}">
                   </div>
                 </td>
 
                 <td class="text-center pe-4 align-middle">
                   <div class="btn-group shadow-sm">
-                    <a th:href="@{/usuario/detail/{IdUsuario}(IdUsuario=${usuario.IdUsuario})}"
+                    <a th:href="@{/usuario/detail/{IdUsuario}(IdUsuario=${usuario.idUsuario})}"
                       class="btn btn-sm btn-outline-primary" title="Editar / Ver Detalles">
                       <i class="bi bi-pencil-square"></i>
                     </a>
                     <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar-direccion-usuario"
                       title="Eliminar"
-                      th:data-url="@{/usuario/detail/delete/{IdUsuario}(IdUsuario=${usuario.IdUsuario})}">
+                      th:data-url="@{/usuario/detail/delete/{IdUsuario}(IdUsuario=${usuario.idUsuario})}">
                       <i class="bi bi-trash"></i>
                     </button>
                   </div>

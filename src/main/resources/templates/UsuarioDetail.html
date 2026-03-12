@@ -238,9 +238,10 @@
                         aria-label="Close"></button>
                 </div>
 
-                <form method="post" th:action="@{/usuario/agregarDireccion}" th:object="${nuevaDireccion}">
+                <form method="post" th:action="@{/usuario/addDirection/{idUsuario}(idUsuario=${usuario.IdUsuario})}"
+                    th:object="${nuevaDireccion}">
 
-                    <input type="hidden" name="IdUsuario" th:value="${usuario.IdUsuario}" />
+                    <input type="hidden" name="IdUsuario" th:value="${usuario.idUsuario}" />
 
                     <div class="modal-body">
                         <h5 class="form-section-title"><i class="bi bi-geo-alt me-2"></i>Dirección</h5>
@@ -248,19 +249,19 @@
                             <div class="col-md-6">
                                 <label for="Calle" class="form-label">Calle</label>
                                 <input type="text" class="form-control validar-direccion validar-direccion-blur"
-                                    id="Calle" placeholder="Ej. Avenida Reforma" th:field="*{Calle}" />
+                                    id="Calle" placeholder="Ej. Avenida Reforma" th:field="*{calle}" />
                                 <span id="errorCalle" class="text-danger small"></span>
                             </div>
                             <div class="col-md-3">
                                 <label for="NumeroExterior" class="form-label">Núm. Exterior</label>
                                 <input type="text" class="form-control validar-direccion validar-direccion-blur"
-                                    id="NumeroExterior" placeholder="Ej. 123" th:field="*{NumeroExterior}" />
+                                    id="NumeroExterior" placeholder="Ej. 123" th:field="*{numeroExterior}" />
                                 <span id="errorNumeroExterior" class="text-danger small"></span>
                             </div>
                             <div class="col-md-3">
                                 <label for="NumeroInterior" class="form-label">Núm. Interior</label>
                                 <input type="text" class="form-control validar-direccion validar-direccion-blur"
-                                    id="NumeroInterior" placeholder="Opcional" th:field="*{NumeroInterior}" />
+                                    id="NumeroInterior" placeholder="Opcional" th:field="*{numeroInterior}" />
                             </div>
 
                             <div class="col-md-3">
