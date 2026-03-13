@@ -28,7 +28,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("usuario")
 public class UsuarioController {
 
-    private static String rutaBase = "http://localhost:8081";
+    private static final String rutaBase = "http://192.167.1.33:8081";
 
 // <editor-fold defaultstate="collapsed" desc="--- GET MAPPINGS / LECTURA ---">
     @GetMapping()
@@ -195,7 +195,7 @@ public class UsuarioController {
                     Result.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 model.addAttribute("usuarioBusqueda", usuarioBusqueda);
-                
+
                 model.addAttribute("usuarios", response.getBody().objects);
             }
         } catch (Exception e) {
