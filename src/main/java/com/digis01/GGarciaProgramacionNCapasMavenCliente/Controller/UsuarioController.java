@@ -10,17 +10,18 @@ import com.digis01.GGarciaProgramacionNCapasMavenCliente.ML.Rol;
 import com.digis01.GGarciaProgramacionNCapasMavenCliente.ML.Usuario;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -28,18 +29,39 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("usuario")
 public class UsuarioController {
 
-    private static final String rutaBase = "http://192.167.1.33:8081";
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final String rutaBase;
+    private final String usuarioEndpoint;
+    private final String rolEndpoint;
+    private final String paisEndpoint;
+    private final String direccionEndpoint;
+
+    public UsuarioController(
+            @Value("${services.base-url}") String rutaBase,
+            @Value("${services.endpoints.usuario}") String usuarioEndpoint,
+            @Value("${services.endpoints.rol}") String rolEndpoint,
+            @Value("${services.endpoints.pais}") String paisEndpoint,
+            @Value("${services.endpoints.direccion}") String direccionEndpoint) {
+        this.rutaBase = rutaBase;
+        this.usuarioEndpoint = usuarioEndpoint;
+        this.rolEndpoint = rolEndpoint;
+        this.paisEndpoint = paisEndpoint;
+        this.direccionEndpoint = direccionEndpoint;
+    }
+
+    private String buildUrl(String endpoint) {
+        return rutaBase + endpoint;
+    }
 
 // <editor-fold defaultstate="collapsed" desc="--- GET MAPPINGS / LECTURA ---">
     @GetMapping()
     public String Index(Model model) {
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Result<Usuario>> usuarios = restTemplate.exchange(rutaBase + "/api/usuario",
+        ResponseEntity<Result<Usuario>> usuarios = restTemplate.exchange(buildUrl(usuarioEndpoint),
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 new ParameterizedTypeReference<Result<Usuario>>() {
         });
-        ResponseEntity<Result<Rol>> roles = restTemplate.exchange(rutaBase + "/api/rol",
+        ResponseEntity<Result<Rol>> roles = restTemplate.exchange(buildUrl(rolEndpoint),
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 new ParameterizedTypeReference<Result<Rol>>() {
@@ -70,17 +92,16 @@ public class UsuarioController {
         usuario.setDirecciones(new ArrayList<>());
         usuario.getDirecciones().add(direccion);
 
-        LocalDate fechaMaxima = LocalDate.now().minusYears(-18);
+        LocalDate fechaMaxima = LocalDate.now().minusYears(18);
         model.addAttribute("fechaMaxima", fechaMaxima);
 
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Result<Pais>> paises = restTemplate.exchange(rutaBase + "/api/pais",
+        ResponseEntity<Result<Pais>> paises = restTemplate.exchange(buildUrl(paisEndpoint),
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 new ParameterizedTypeReference<Result<Pais>>() {
         });
 
-        ResponseEntity<Result<Rol>> roles = restTemplate.exchange(rutaBase + "/api/rol",
+        ResponseEntity<Result<Rol>> roles = restTemplate.exchange(buildUrl(rolEndpoint),
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 new ParameterizedTypeReference<Result<Rol>>() {
@@ -102,9 +123,8 @@ public class UsuarioController {
 
     @GetMapping("/detail/{idUsuario}")
     public String DetailUsuario(@PathVariable("idUsuario") int idUsuario, Model model) {
-        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Usuario> usuarioBusqueda = restTemplate.exchange(
-                rutaBase + "/api/usuario/" + idUsuario,
+                buildUrl(usuarioEndpoint) + "/" + idUsuario,
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 Usuario.class);
@@ -113,7 +133,7 @@ public class UsuarioController {
         }
 
         ResponseEntity<Result<Rol>> roles = restTemplate.exchange(
-                rutaBase + "/api/rol",
+                buildUrl(rolEndpoint),
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 new ParameterizedTypeReference<Result<Rol>>() {
@@ -124,7 +144,7 @@ public class UsuarioController {
         }
 
         ResponseEntity<Result<Pais>> paises = restTemplate.exchange(
-                rutaBase + "/api/pais",
+                buildUrl(paisEndpoint),
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 new ParameterizedTypeReference<Result<Pais>>() {
@@ -143,8 +163,7 @@ public class UsuarioController {
 // <editor-fold defaultstate="collapsed" desc="--- POST MAPPINGS (ESCRITURA / PROCESAMIENTO) ---">
     @PostMapping("/addDirection/{idUsuario}")
     public String AddDirection(@ModelAttribute("nuevaDireccion") Direccion nuevaDireccion, @PathVariable("idUsuario") int idUsuario, RedirectAttributes redirectAttributes) {
-        RestTemplate restTemplate = new RestTemplate();
-        String urlServicio = rutaBase + "/api/direccion/" + idUsuario;
+        String urlServicio = buildUrl(direccionEndpoint) + "/" + idUsuario;
         HttpEntity<Direccion> requesBody = new HttpEntity<>(nuevaDireccion);
         try {
             ResponseEntity<Result> response = restTemplate.exchange(
@@ -163,8 +182,7 @@ public class UsuarioController {
 
     @PostMapping("/add")
     public String AddUsuarioDireccion(@ModelAttribute("usuario") Usuario usuario, Model model, RedirectAttributes redirectAttributes) {
-        RestTemplate restTemplate = new RestTemplate();
-        String urlServicio = rutaBase + "/api/usuario";
+        String urlServicio = buildUrl(usuarioEndpoint);
         HttpEntity<Usuario> requesBody = new HttpEntity<>(usuario);
         try {
             ResponseEntity<Result> response = restTemplate.exchange(
@@ -184,8 +202,7 @@ public class UsuarioController {
 
     @PostMapping("/buscar")
     public String Buscar(@ModelAttribute("usuarioBusqueda") Usuario usuarioBusqueda, Model model, RedirectAttributes redirectAttributes) {
-        RestTemplate restTemplate = new RestTemplate();
-        String urlServicio = rutaBase + "/api/usuario/buscar";
+        String urlServicio = buildUrl(usuarioEndpoint) + "/buscar";
         HttpEntity<Usuario> requesBody = new HttpEntity<>(usuarioBusqueda);
         try {
             ResponseEntity<Result> response = restTemplate.exchange(
@@ -195,7 +212,14 @@ public class UsuarioController {
                     Result.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 model.addAttribute("usuarioBusqueda", usuarioBusqueda);
-
+                ResponseEntity<Result<Rol>> roles = restTemplate.exchange(buildUrl(rolEndpoint),
+                        HttpMethod.GET,
+                        HttpEntity.EMPTY,
+                        new ParameterizedTypeReference<Result<Rol>>() {
+                });
+                if (roles.getStatusCode().is2xxSuccessful()) {
+                    model.addAttribute("roles", roles.getBody().objects);
+                }
                 model.addAttribute("usuarios", response.getBody().objects);
             }
         } catch (Exception e) {
