@@ -12,6 +12,7 @@ import com.digis01.GGarciaProgramacionNCapasMavenCliente.ML.Usuario;
 import com.digis01.GGarciaProgramacionNCapasMavenCliente.Security.AppUserPrincipal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -73,20 +75,32 @@ public class UsuarioController {
 // <editor-fold defaultstate="collapsed" desc="--- GET MAPPINGS / LECTURA ---">
     @GetMapping()
     public String Index(Model model) {
-        ResponseEntity<Result<Usuario>> usuarios = restTemplate.exchange(buildUrl(servicesProperties.getEndpoints().getUsuario()),
-                HttpMethod.GET,
-                authorizedEmptyEntity(),
-                new ParameterizedTypeReference<Result<Usuario>>() {
-        });
-        ResponseEntity<Result<Rol>> roles = restTemplate.exchange(buildUrl(servicesProperties.getEndpoints().getRol()),
-                HttpMethod.GET,
-                authorizedEmptyEntity(),
-                new ParameterizedTypeReference<Result<Rol>>() {
-        });
-        if (usuarios.getStatusCode().is2xxSuccessful() && roles.getStatusCode().is2xxSuccessful()) {
-            model.addAttribute("usuarios", usuarios.getBody().objects);
-            model.addAttribute("usuarioBusqueda", new Usuario());
-            model.addAttribute("roles", roles.getBody().objects);
+        model.addAttribute("usuarios", Collections.emptyList());
+        model.addAttribute("roles", Collections.emptyList());
+        model.addAttribute("usuarioBusqueda", new Usuario());
+
+        try {
+            ResponseEntity<Result<Usuario>> usuarios = restTemplate.exchange(buildUrl(servicesProperties.getEndpoints().getUsuario()),
+                    HttpMethod.GET,
+                    authorizedEmptyEntity(),
+                    new ParameterizedTypeReference<Result<Usuario>>() {
+            });
+            ResponseEntity<Result<Rol>> roles = restTemplate.exchange(buildUrl(servicesProperties.getEndpoints().getRol()),
+                    HttpMethod.GET,
+                    authorizedEmptyEntity(),
+                    new ParameterizedTypeReference<Result<Rol>>() {
+            });
+
+            if (usuarios.getStatusCode().is2xxSuccessful() && usuarios.getBody() != null && usuarios.getBody().objects != null) {
+                model.addAttribute("usuarios", usuarios.getBody().objects);
+            }
+            if (roles.getStatusCode().is2xxSuccessful() && roles.getBody() != null && roles.getBody().objects != null) {
+                model.addAttribute("roles", roles.getBody().objects);
+            }
+        } catch (HttpClientErrorException.Forbidden ex) {
+            return "redirect:/login?backend403";
+        } catch (Exception ex) {
+            model.addAttribute("mensajeError", "No se pudo consultar el servicio de usuarios.");
         }
         return "Usuario";
     }

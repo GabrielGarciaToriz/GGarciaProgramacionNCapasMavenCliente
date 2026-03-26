@@ -17,6 +17,9 @@
                         <div th:if="${param.error}" class="alert alert-danger py-2" role="alert">
                             Usuario o contrasena invalidos.
                         </div>
+                        <div th:if="${param.backend403}" class="alert alert-warning py-2" role="alert">
+                            Tu sesion no tiene permisos para consultar el backend. Inicia sesion de nuevo.
+                        </div>
                         <div th:if="${param.logout}" class="alert alert-success py-2" role="alert">
                             Sesion cerrada correctamente.
                         </div>
