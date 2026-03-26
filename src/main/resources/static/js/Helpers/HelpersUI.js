@@ -1,4 +1,15 @@
-export const API_BASE_URL = "http://localhost:8081"
+const readMetaContent = (name, fallback) => {
+    const meta = document.querySelector(`meta[name="${name}"]`);
+    return meta?.content?.trim() || fallback;
+};
+
+export const API_BASE_URL = readMetaContent("services-base-url", "http://localhost:8081");
+
+export const API_ENDPOINTS = {
+    estado: readMetaContent("services-endpoint-estado", "/api/estado"),
+    municipio: readMetaContent("services-endpoint-municipio", "/api/municipio"),
+    colonia: readMetaContent("services-endpoint-colonia", "/api/colonia")
+};
 
 export const mostrarError = (input, mensaje) => {
     const errorSpan = $(`#error${input.id}`);

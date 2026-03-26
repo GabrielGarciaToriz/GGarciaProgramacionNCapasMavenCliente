@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "../Helpers/HelpersUI.js";
+import { API_BASE_URL, API_ENDPOINTS } from "../Helpers/HelpersUI.js";
 
 export function DireccionByCodigoPostal() {
     $("#CodigoPostal").change(function () {
@@ -6,7 +6,7 @@ export function DireccionByCodigoPostal() {
 
         if (codigoPostal !== "") {
             $.ajax({
-                url: `${API_BASE_URL}/api/colonia/codigoPostal/` + codigoPostal,
+                url: `${API_BASE_URL}${API_ENDPOINTS.colonia}/codigoPostal/` + codigoPostal,
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
@@ -68,7 +68,7 @@ export function CascadeoUbicacion() {
 
         if (idMunicipio != "0") {
             $.ajax({
-                url: `${API_BASE_URL}/api/colonia/` + idMunicipio,
+                url: `${API_BASE_URL}${API_ENDPOINTS.colonia}/` + idMunicipio,
                 type: "GET",
                 dataType: "json",
                 success: function (data) {

@@ -1,4 +1,4 @@
-import { cargarSelectCascada, API_BASE_URL } from '../Helpers/HelpersUI.js'; // Ajusta la ruta según tu proyecto
+import { cargarSelectCascada, API_BASE_URL, API_ENDPOINTS } from '../Helpers/HelpersUI.js';
 
 export function PaisEstado() {
     const $selectPais = $("#selectPais");
@@ -9,7 +9,7 @@ export function PaisEstado() {
     $selectPais.change(function () {
         cargarSelectCascada(
             $(this).val(), 
-            `${API_BASE_URL}/api/estado/`, 
+            `${API_BASE_URL}${API_ENDPOINTS.estado}/`, 
             $selectEstado, 
             "Selecciona un estado", 
             "idEstado",   

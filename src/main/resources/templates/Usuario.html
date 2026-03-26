@@ -12,6 +12,12 @@
 
     <div class="card shadow sm border-0 rounded-4 mb-4">
       <div class="card-body bg-light rounded-4">
+        <div class="d-flex justify-content-end align-items-center mb-3">
+          <span class="me-3 text-secondary small" th:text="|Sesion: ${loggedUserName}|"></span>
+          <form th:action="@{/logout}" method="post" class="m-0">
+            <button type="submit" class="btn btn-sm btn-outline-dark">Cerrar sesion</button>
+          </form>
+        </div>
         <form th:action="@{/usuario/buscar}" th:object="${usuarioBusqueda}" method="post">
           <div class="row g-3 align-items-end">
             <div class="col-md-3">
@@ -50,7 +56,7 @@
       <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
         <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-people-fill me-2"></i>Directorio de Usuarios</h5>
 
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2" th:if="${isAdmin}">
           <a th:href="@{/usuario/cargar}" class="btn btn-success rounded-pill shadow-sm px-3"
             title="Carga Masiva de Usuarios">
             <i class="bi bi-cloud-upload me-1"></i> Cargar Usuarios
@@ -70,7 +76,7 @@
                 <th class="ps-4">Usuario</th>
                 <th>Contacto</th>
                 <th>Direcciones Registradas</th>
-                <th class="text-center">Estatus</th>
+                <th class="text-center" th:if="${isAdmin}">Estatus</th>
                 <th class="text-center pe-4">Acciones</th>
               </tr>
             </thead>
@@ -138,13 +144,13 @@
                   </div>
                 </td>
 
-                <td class="text-center align-middle">
+                <td class="text-center align-middle" th:if="${isAdmin}">
                   <div class="form-check form-switch d-flex justify-content-center">
                     <input class="form-check-input" type="checkbox" role="switch"
                       th:id="'switchEstatus_' + ${usuario.idUsuario}"
                       th:checked="${usuario.estatus != null and (#strings.toString(usuario.estatus) == '1' or #strings.toString(usuario.estatus) == 'true')}"
                       th:data-usuario-id="${usuario.idUsuario}"
-                      th:data-url="@{'http://localhost:8081/api/usuario/cambioStatus/'+${usuario.idUsuario}+'/'}">
+                      th:data-url="|${servicesBaseUrl}${usuarioEndpoint}/cambioStatus/${usuario.idUsuario}/|">
                   </div>
                 </td>
 
@@ -154,7 +160,7 @@
                       class="btn btn-sm btn-outline-primary" title="Editar / Ver Detalles">
                       <i class="bi bi-pencil-square"></i>
                     </a>
-                    <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar-direccion-usuario"
+                    <button th:if="${isAdmin}" type="button" class="btn btn-sm btn-outline-danger btn-eliminar-direccion-usuario"
                       title="Eliminar"
                       th:data-url="@{/usuario/detail/delete/{IdUsuario}(IdUsuario=${usuario.idUsuario})}">
                       <i class="bi bi-trash"></i>

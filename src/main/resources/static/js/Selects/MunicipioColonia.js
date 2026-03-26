@@ -1,4 +1,4 @@
-import { cargarSelectCascada, API_BASE_URL } from '../Helpers/HelpersUI.js';
+import { cargarSelectCascada, API_BASE_URL, API_ENDPOINTS } from '../Helpers/HelpersUI.js';
 
 export function MunicipioColonia() {
     const $selectMunicipio = $("#selectMunicipio");
@@ -7,7 +7,7 @@ export function MunicipioColonia() {
     $selectMunicipio.change(function () {
         cargarSelectCascada(
             $(this).val(),
-            `${API_BASE_URL}/api/colonia/`,
+            `${API_BASE_URL}${API_ENDPOINTS.colonia}/`,
             $selectColonia,
             "Selecciona una colonia",
             "IdColonia",

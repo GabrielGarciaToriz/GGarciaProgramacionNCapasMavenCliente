@@ -1,5 +1,6 @@
 package com.digis01.GGarciaProgramacionNCapasMavenCliente.Controller;
 
+import com.digis01.GGarciaProgramacionNCapasMavenCliente.Config.ServicesProperties;
 import com.digis01.GGarciaProgramacionNCapasMavenCliente.ML.Colonia;
 import com.digis01.GGarciaProgramacionNCapasMavenCliente.ML.Direccion;
 import com.digis01.GGarciaProgramacionNCapasMavenCliente.ML.Estado;
@@ -8,13 +9,16 @@ import com.digis01.GGarciaProgramacionNCapasMavenCliente.ML.Pais;
 import com.digis01.GGarciaProgramacionNCapasMavenCliente.ML.Result;
 import com.digis01.GGarciaProgramacionNCapasMavenCliente.ML.Rol;
 import com.digis01.GGarciaProgramacionNCapasMavenCliente.ML.Usuario;
+import com.digis01.GGarciaProgramacionNCapasMavenCliente.Security.AppUserPrincipal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,40 +34,53 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UsuarioController {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String rutaBase;
-    private final String usuarioEndpoint;
-    private final String rolEndpoint;
-    private final String paisEndpoint;
-    private final String direccionEndpoint;
+    private final ServicesProperties servicesProperties;
 
-    public UsuarioController(
-            @Value("${services.base-url}") String rutaBase,
-            @Value("${services.endpoints.usuario}") String usuarioEndpoint,
-            @Value("${services.endpoints.rol}") String rolEndpoint,
-            @Value("${services.endpoints.pais}") String paisEndpoint,
-            @Value("${services.endpoints.direccion}") String direccionEndpoint) {
-        this.rutaBase = rutaBase;
-        this.usuarioEndpoint = usuarioEndpoint;
-        this.rolEndpoint = rolEndpoint;
-        this.paisEndpoint = paisEndpoint;
-        this.direccionEndpoint = direccionEndpoint;
+    public UsuarioController(ServicesProperties servicesProperties) {
+        this.servicesProperties = servicesProperties;
     }
 
     private String buildUrl(String endpoint) {
-        return rutaBase + endpoint;
+        return servicesProperties.getBaseUrl() + endpoint;
+    }
+
+    private HttpHeaders authHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof AppUserPrincipal principal) {
+            headers.set(HttpHeaders.AUTHORIZATION, principal.getApiAuthorizationHeader());
+        }
+        return headers;
+    }
+
+    private HttpEntity<Void> authorizedEmptyEntity() {
+        return new HttpEntity<>(authHeaders());
+    }
+
+    private <T> HttpEntity<T> authorizedEntity(T body) {
+        return new HttpEntity<>(body, authHeaders());
+    }
+
+    @ModelAttribute
+    public void injectServiceConfig(Model model) {
+        model.addAttribute("servicesBaseUrl", servicesProperties.getBaseUrl());
+        model.addAttribute("usuarioEndpoint", servicesProperties.getEndpoints().getUsuario());
+        model.addAttribute("estadoEndpoint", servicesProperties.getEndpoints().getEstado());
+        model.addAttribute("municipioEndpoint", servicesProperties.getEndpoints().getMunicipio());
+        model.addAttribute("coloniaEndpoint", servicesProperties.getEndpoints().getColonia());
     }
 
 // <editor-fold defaultstate="collapsed" desc="--- GET MAPPINGS / LECTURA ---">
     @GetMapping()
     public String Index(Model model) {
-        ResponseEntity<Result<Usuario>> usuarios = restTemplate.exchange(buildUrl(usuarioEndpoint),
+        ResponseEntity<Result<Usuario>> usuarios = restTemplate.exchange(buildUrl(servicesProperties.getEndpoints().getUsuario()),
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
+                authorizedEmptyEntity(),
                 new ParameterizedTypeReference<Result<Usuario>>() {
         });
-        ResponseEntity<Result<Rol>> roles = restTemplate.exchange(buildUrl(rolEndpoint),
+        ResponseEntity<Result<Rol>> roles = restTemplate.exchange(buildUrl(servicesProperties.getEndpoints().getRol()),
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
+                authorizedEmptyEntity(),
                 new ParameterizedTypeReference<Result<Rol>>() {
         });
         if (usuarios.getStatusCode().is2xxSuccessful() && roles.getStatusCode().is2xxSuccessful()) {
@@ -95,15 +112,15 @@ public class UsuarioController {
         LocalDate fechaMaxima = LocalDate.now().minusYears(18);
         model.addAttribute("fechaMaxima", fechaMaxima);
 
-        ResponseEntity<Result<Pais>> paises = restTemplate.exchange(buildUrl(paisEndpoint),
+        ResponseEntity<Result<Pais>> paises = restTemplate.exchange(buildUrl(servicesProperties.getEndpoints().getPais()),
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
+                authorizedEmptyEntity(),
                 new ParameterizedTypeReference<Result<Pais>>() {
         });
 
-        ResponseEntity<Result<Rol>> roles = restTemplate.exchange(buildUrl(rolEndpoint),
+        ResponseEntity<Result<Rol>> roles = restTemplate.exchange(buildUrl(servicesProperties.getEndpoints().getRol()),
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
+                authorizedEmptyEntity(),
                 new ParameterizedTypeReference<Result<Rol>>() {
         });
 
@@ -124,18 +141,18 @@ public class UsuarioController {
     @GetMapping("/detail/{idUsuario}")
     public String DetailUsuario(@PathVariable("idUsuario") int idUsuario, Model model) {
         ResponseEntity<Usuario> usuarioBusqueda = restTemplate.exchange(
-                buildUrl(usuarioEndpoint) + "/" + idUsuario,
+                buildUrl(servicesProperties.getEndpoints().getUsuario()) + "/" + idUsuario,
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
+                authorizedEmptyEntity(),
                 Usuario.class);
         if (usuarioBusqueda.getStatusCode().value() == 200) {
             model.addAttribute("usuario", usuarioBusqueda.getBody());
         }
 
         ResponseEntity<Result<Rol>> roles = restTemplate.exchange(
-                buildUrl(rolEndpoint),
+                buildUrl(servicesProperties.getEndpoints().getRol()),
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
+                authorizedEmptyEntity(),
                 new ParameterizedTypeReference<Result<Rol>>() {
         });
 
@@ -144,9 +161,9 @@ public class UsuarioController {
         }
 
         ResponseEntity<Result<Pais>> paises = restTemplate.exchange(
-                buildUrl(paisEndpoint),
+                buildUrl(servicesProperties.getEndpoints().getPais()),
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
+                authorizedEmptyEntity(),
                 new ParameterizedTypeReference<Result<Pais>>() {
         }
         );
@@ -163,8 +180,8 @@ public class UsuarioController {
 // <editor-fold defaultstate="collapsed" desc="--- POST MAPPINGS (ESCRITURA / PROCESAMIENTO) ---">
     @PostMapping("/addDirection/{idUsuario}")
     public String AddDirection(@ModelAttribute("nuevaDireccion") Direccion nuevaDireccion, @PathVariable("idUsuario") int idUsuario, RedirectAttributes redirectAttributes) {
-        String urlServicio = buildUrl(direccionEndpoint) + "/" + idUsuario;
-        HttpEntity<Direccion> requesBody = new HttpEntity<>(nuevaDireccion);
+        String urlServicio = buildUrl(servicesProperties.getEndpoints().getDireccion()) + "/" + idUsuario;
+        HttpEntity<Direccion> requesBody = authorizedEntity(nuevaDireccion);
         try {
             ResponseEntity<Result> response = restTemplate.exchange(
                     urlServicio,
@@ -182,8 +199,8 @@ public class UsuarioController {
 
     @PostMapping("/add")
     public String AddUsuarioDireccion(@ModelAttribute("usuario") Usuario usuario, Model model, RedirectAttributes redirectAttributes) {
-        String urlServicio = buildUrl(usuarioEndpoint);
-        HttpEntity<Usuario> requesBody = new HttpEntity<>(usuario);
+        String urlServicio = buildUrl(servicesProperties.getEndpoints().getUsuario());
+        HttpEntity<Usuario> requesBody = authorizedEntity(usuario);
         try {
             ResponseEntity<Result> response = restTemplate.exchange(
                     urlServicio,
@@ -202,8 +219,8 @@ public class UsuarioController {
 
     @PostMapping("/buscar")
     public String Buscar(@ModelAttribute("usuarioBusqueda") Usuario usuarioBusqueda, Model model, RedirectAttributes redirectAttributes) {
-        String urlServicio = buildUrl(usuarioEndpoint) + "/buscar";
-        HttpEntity<Usuario> requesBody = new HttpEntity<>(usuarioBusqueda);
+        String urlServicio = buildUrl(servicesProperties.getEndpoints().getUsuario()) + "/buscar";
+        HttpEntity<Usuario> requesBody = authorizedEntity(usuarioBusqueda);
         try {
             ResponseEntity<Result> response = restTemplate.exchange(
                     urlServicio,
@@ -212,9 +229,9 @@ public class UsuarioController {
                     Result.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 model.addAttribute("usuarioBusqueda", usuarioBusqueda);
-                ResponseEntity<Result<Rol>> roles = restTemplate.exchange(buildUrl(rolEndpoint),
+                ResponseEntity<Result<Rol>> roles = restTemplate.exchange(buildUrl(servicesProperties.getEndpoints().getRol()),
                         HttpMethod.GET,
-                        HttpEntity.EMPTY,
+                        authorizedEmptyEntity(),
                         new ParameterizedTypeReference<Result<Rol>>() {
                 });
                 if (roles.getStatusCode().is2xxSuccessful()) {
